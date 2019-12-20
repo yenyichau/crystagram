@@ -44,6 +44,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       currentUserId: widget.currentUserId,
       userId: widget.userId,
     );
+
+    if (!mounted) return;
+
     setState(() {
       _isFollowing = isFollowingUser;
     });
@@ -51,6 +54,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   _setupFollowers() async {
     int userFollowerCount = await DatabaseService.numFollowers(widget.userId);
+
+    if (!mounted) return;
+
     setState(() {
       _followerCount = userFollowerCount;
     });
@@ -58,6 +64,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   _setupFollowing() async {
     int userFollowingCount = await DatabaseService.numFollowing(widget.userId);
+
+    if (!mounted) return;
+
     setState(() {
       _followingCount = userFollowingCount;
     });
@@ -65,6 +74,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   _setupPosts() async {
     List<Post> posts = await DatabaseService.getUserPosts(widget.userId);
+
+    if (!mounted) return;
+
     setState(() {
       _posts = posts;
     });
@@ -72,6 +84,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   _setupProfileUser() async {
     User profileUser = await DatabaseService.getUserWithId(widget.userId);
+
+    if (!mounted) return;
+
     setState(() {
       _profileUser = profileUser;
     });
@@ -101,6 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       currentUserId: widget.currentUserId,
       userId: widget.userId,
     );
+
     setState(() {
       _isFollowing = true;
       _followerCount++;
@@ -109,34 +125,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   _displayButton(User user) {
     return user.id == Provider.of<UserData>(context).currentUserId
-        ? Container(
-            width: 200.0,
-            child: FlatButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => EditProfileScreen(
-                    user: user,
+        ? Padding(
+            padding: const EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 0.0),
+            child: Container(
+              width: 200.0,
+              child: FlatButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EditProfileScreen(
+                      user: user,
+                    ),
                   ),
                 ),
-              ),
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text(
-                'Edit Profile',
-                style: TextStyle(fontSize: 18.0),
+                color: Colors.blue,
+                textColor: Colors.white,
+                child: Text(
+                  'Edit Profile',
+                  style: TextStyle(fontSize: 18.0),
+                ),
               ),
             ),
           )
-        : Container(
-            width: 200.0,
-            child: FlatButton(
-              onPressed: _followOrUnfollow,
-              color: _isFollowing ? Colors.grey[200] : Colors.blue,
-              textColor: _isFollowing ? Colors.black : Colors.white,
-              child: Text(
-                _isFollowing ? 'Unfollow' : 'Follow',
-                style: TextStyle(fontSize: 18.0),
+        : Padding(
+            padding: const EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 0.0),
+            child: Container(
+              width: 200.0,
+              child: FlatButton(
+                onPressed: _followOrUnfollow,
+                color: _isFollowing ? Colors.grey[200] : Colors.blue,
+                textColor: _isFollowing ? Colors.black : Colors.white,
+                child: Text(
+                  _isFollowing ? 'Unfollow' : 'Follow',
+                  style: TextStyle(fontSize: 18.0),
+                ),
               ),
             ),
           );
@@ -327,10 +349,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         actions: <Widget>[
-          widget.isFromSearchScreen ? Container() : IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: AuthService.logout,
-          ),
+          widget.isFromSearchScreen
+              ? Container()
+              : IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: AuthService.logout,
+                ),
         ],
       ),
       body: FutureBuilder(

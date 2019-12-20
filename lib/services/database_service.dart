@@ -102,6 +102,9 @@ class DatabaseService {
         .getDocuments();
     List<Post> posts =
         feedSnapshot.documents.map((doc) => Post.fromDoc(doc)).toList();
+
+    print(posts.length);
+
     return posts;
   }
 

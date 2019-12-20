@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: PageView(
         controller: _pageController,
         children: <Widget>[
-          FeedScreen(currentUserId: currentUserId),
+          FeedScreen(currentUserId: currentUserId, isFromNavigationTab: true,),
           SearchScreen(),
           CreatePostScreen(),
           ActivityScreen(),
