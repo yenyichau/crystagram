@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:crystagram_yen/utilities/dialog_message.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:crystagram_yen/models/post_model.dart';
 import 'package:crystagram_yen/models/user_data.dart';
 import 'package:crystagram_yen/models/user_model.dart';
 import 'package:crystagram_yen/screens/edit_profile_screen.dart';
-import 'package:crystagram_yen/services/auth_service.dart';
 import 'package:crystagram_yen/services/database_service.dart';
 import 'package:crystagram_yen/utilities/constants.dart';
 import 'package:crystagram_yen/widgets/post_view.dart';
@@ -28,6 +29,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<Post> _posts = [];
   int _displayPosts = 0; // 0 - grid, 1 - column
   User _profileUser;
+
+  List<Choice> choices = const <Choice>[
+    const Choice(title: 'Settings', icon: Icons.settings),
+    const Choice(title: 'Log out', icon: Icons.exit_to_app),
+  ];
 
   @override
   void initState() {
@@ -334,11 +340,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  _onItemMenuPress(Choice choice) {
+    if (choice.title == 'Log out') {
+      FirebaseAuth.instance.signOut();
+    } else {
+      DialogMessage.showMessageDialog(
+          context, 'Coming Soon', 'Settings is currently unavailable');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         title: Text(
           'crystagram',
@@ -351,9 +367,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: <Widget>[
           widget.isFromSearchScreen
               ? Container()
-              : IconButton(
-                  icon: Icon(Icons.exit_to_app),
-                  onPressed: AuthService.logout,
+              : PopupMenuButton<Choice>(
+                  onSelected: _onItemMenuPress,
+                  itemBuilder: (BuildContext context) {
+                    return choices.map((Choice choice) {
+                      return PopupMenuItem<Choice>(
+                          value: choice,
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                choice.icon,
+                                color: Colors.black,
+                              ),
+                              Container(
+                                width: 10.0,
+                              ),
+                              Text(
+                                choice.title,
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ));
+                    }).toList();
+                  },
                 ),
         ],
       ),
@@ -378,4 +414,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+}
+
+class Choice {
+  const Choice({this.title, this.icon});
+
+  final String title;
+  final IconData icon;
 }

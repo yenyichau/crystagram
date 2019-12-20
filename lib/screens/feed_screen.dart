@@ -1,3 +1,4 @@
+import 'package:crystagram_yen/utilities/keep_alive_future_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:crystagram_yen/models/post_model.dart';
 import 'package:crystagram_yen/models/user_model.dart';
@@ -70,7 +71,7 @@ class _FeedScreenState extends State<FeedScreen> {
             itemCount: _posts.length,
             itemBuilder: (BuildContext context, int index) {
               Post post = _posts[index];
-              return FutureBuilder(
+              return KeepAliveFutureBuilder(
                 future: DatabaseService.getUserWithId(post.authorId),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) {
@@ -92,6 +93,7 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         title: Text(
           'crystagram',
